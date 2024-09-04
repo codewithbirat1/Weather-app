@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Weather App</title>
+</head>
+<body>
+    <div class="card">
+        <div class="container">
+            <div class="search-container">
+                <input class="input1" type="text" placeholder="Enter city name" spellcheck="false" id="city">
+                <button type="submit" class="Sub">Go</button>
+            </div>
+            <div class="weather">
+                <img src="images/rain.png" class="weather-icon" id="weather-icon">
+                <h1 class="temp" id="Temp">22°C</h1>
+                <h2 class="city1" id="city-name">Butwal</h2>
+                <div class="details">
+                    <div class="col">
+                        <img src="images/humidity.png">
+                        <div>
+                            <p class="humidity" id="hum">50%</p>
+                            <p class="humidity-text">Humidity</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <img src="images/wind.png">
+                        <div>
+                            <div class="wind" id="wind1">15mph</div>
+                            <p class="wind-text">Wind Speed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const apiKey = '4f5b0076020540c9b27100616240107';
+        const searchBtn = document.querySelector('.Sub');
+        const cityInput = document.getElementById('city');
+        const tempElement = document.getElementById('Temp');
+        const humidityElement = document.getElementById('hum');
+        const windElement = document.getElementById('wind1');
+        const cityNameElement = document.getElementById('city-name');
+        const weatherIconElement = document.getElementById('weather-icon');
+
+        // Function to fetch weather data and update the UI
+        async function check(city) {
+            const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`);
+            const data = await response.json();
+            
+            tempElement.innerText = `${data.current.temp_c}°C`;
+            humidityElement.innerText = `${data.current.humidity}%`;
+            windElement.innerText = `${data.current.wind_mph} mph`;
+            cityNameElement.innerText = city;
+            
+            const condition = data.current.condition.text.toLowerCase();
+            if (condition.includes("cloudy")) {
+                weatherIconElement.src = "images/clouds.png";
+            } else if (condition.includes("mist")) {
+                weatherIconElement.src = "images/mist.png";
+            } else if (condition.includes("sunny")) {
+                weatherIconElement.src = "images/clear.png";
+            } else if (condition.includes("snow")) {
+                weatherIconElement.src = "images/snow.png";
+            } else if (condition.includes("rain")) {
+                weatherIconElement.src = "images/rain.png";
+            } else if (condition.includes("drizzle")) {
+                weatherIconElement.src = "images/drizzle.png";
+            }
+        }
+
+        // Event listener for the search button
+        searchBtn.addEventListener('click', async () => {
+            const city = cityInput.value;
+            if (city) {
+                await check(city);
+            }
+        });
+
+        // Initial call to display weather for Butwal, Nepal
+        window.onload = () => {
+            check('Butwal');
+        };
+    </script>
+</body>
+</html>
